@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mertabii0.github.io/sitemap.xml
