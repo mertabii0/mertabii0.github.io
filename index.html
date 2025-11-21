@@ -651,8 +651,16 @@
         .section-title {
             font-size: 48px;
             font-weight: 700;
-            margin-bottom: 50px;
+            margin-bottom: 16px;
             text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.72);
+            margin-bottom: 34px;
+            text-align: center;
+            font-weight: 500;
         }
 
         .projects-grid {
@@ -1300,6 +1308,7 @@
     <!-- Portfolio Section -->
     <section class="portfolio" id="portfolio">
         <h2 class="section-title">Portfolio</h2>
+        <p class="section-subtitle">My projects</p>
         <div class="projects-grid">
             <!-- Homeland City -->
             <div class="project-card" onclick="openModal('homeland')">
@@ -1316,7 +1325,7 @@
                         </div>
                         <div class="project-status">
                             <span class="status-dot"></span>
-                            ACTIVE
+                            IN DEVELOPEMENT
                         </div>
                     </div>
                 </div>
@@ -1343,7 +1352,7 @@
                 </div>
             </div>
 
-            <!-- Purple-V -->
+            <!-- Albero City -->
             <div class="project-card" onclick="openModal('purple')">
                 <span class="project-year">2022</span>
                 <img src="https://media.discordapp.net/attachments/986327645014884362/1004695167137230888/Logo.png?ex=6920e58a&is=691f940a&hm=e5a1372f6b410c126cd0ac680d3df4c0d98230f1c1e966a06932bd0f392547a6&=&format=webp&quality=lossless" alt="Albero City" class="project-image">
@@ -1384,11 +1393,43 @@
         </section>
 
         <!-- Footer / Copyright -->
-        <footer style="width: 100%; background: rgba(20,20,30,0.92); color: #fff; text-align: center; padding: 32px 0 16px 0; margin-top: 60px; font-size: 17px; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -2px 24px rgba(138,43,226,0.12); border-top: 1.5px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px);">
-            <!-- Social icons removed from footer per request -->
-            <div style="font-size: 15px; color: #fff; opacity: 0.85; letter-spacing: 1px; display:flex; gap:12px; align-items:center; justify-content:center; flex-direction:column;">
-                <div>&copy; 2025 Mertabii Developer & Designer – Made with <span style="color:#ff00ff;">❤</span> for the Community</div>
-                <div style="margin-top:6px;"></div>
+        <style>
+            .site-footer{
+                width:100%;
+                background: rgba(20,20,30,0.92);
+                color: #fff;
+                margin-top: 36px;
+                border-top-left-radius: 24px;
+                border-top-right-radius: 24px;
+                box-shadow: 0 -2px 24px rgba(138,43,226,0.12);
+                border-top: 1.5px solid rgba(255,255,255,0.08);
+                backdrop-filter: blur(12px);
+            }
+            .site-footer-inner{
+                max-width:1200px;
+                margin:0 auto;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:12px;
+                font-size:14px;
+                color:#fff;
+                opacity:0.95;
+                padding:25px 20px;
+                box-sizing:border-box;
+            }
+            .site-footer .left, .site-footer .right{ line-height:1.2; }
+            .site-footer a{ color:inherit; text-decoration:none; font-weight:700; }
+            @media (max-width:640px){
+                .site-footer-inner{ flex-direction:column; text-align:center; gap:8px; padding:12px 16px; }
+                .site-footer .left, .site-footer .right{ width:100%; }
+            }
+        </style>
+
+        <footer class="site-footer" role="contentinfo" aria-label="Footer">
+            <div class="site-footer-inner">
+                <div class="left">&copy; 2025 Mertabii Developer &amp; Designer. Alle Rechte vorbehalten.</div>
+                <div class="right">Powered by <a href="https://mertaksoylu.com" target="_blank" rel="noopener">mertaksoylu.com</a> <span style="color:#ff00ff;">❤</span></div>
             </div>
         </footer>
 
