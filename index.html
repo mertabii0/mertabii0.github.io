@@ -790,6 +790,11 @@
             display: flex;
         }
 
+        /* Slight tweaks for cookie customize modal to match cookie bar style */
+        #cookieCustomizeModal .modal-content { background: linear-gradient(180deg, rgba(6,3,12,0.98), rgba(10,5,18,0.98)); border: 1px solid rgba(138,43,226,0.06); }
+        #cookieCustomizeModal .modal-title { color: #fff; }
+        #cookieCustomizeModal .modal-subtitle { color: rgba(255,255,255,0.7); }
+
         .modal-content {
             background: rgba(20, 20, 20, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1062,9 +1067,101 @@
             /* keep native pointer hidden on common interactive elements so only the dot shows */
             a, button, .btn, .project-card, .top-nav a { cursor: none !important; }
         }
+        /* Bottom cookie bar (compact) — match site accent/background */
+        .cookie-topbar {
+            position: fixed;
+            bottom: 0;
+            top: auto;
+            left: 0;
+            right: 0;
+            /* darker translucent background to blend with site */
+            background: linear-gradient(180deg, rgba(6,3,12,0.96), rgba(10,5,18,0.96));
+            color: #fff;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.45);
+            z-index: 10100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            transform: translateY(120%);
+            transition: transform 260ms cubic-bezier(.2,.9,.2,1);
+            border-top: 1px solid rgba(138,43,226,0.06);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .cookie-topbar.show { transform: translateY(0); }
+
+        .cookie-topbar .inner { max-width: 1180px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+
+        .cookie-topbar .message { flex: 1 1 60%; color: #111; display:flex; flex-direction:column; gap:6px; }
+        .cookie-topbar .cookie-title { font-size: 18px; font-weight: 700; color: #fff; }
+        .cookie-topbar .cookie-text { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.35; }
+        .cookie-topbar .cookie-text a { color: #00ffff; text-decoration: underline; }
+
+        .cookie-topbar .actions { display: flex; gap: 12px; align-items: center; }
+        .cookie-topbar .actions button { min-height: 44px; padding: 10px 18px; border-radius: 8px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,0.06); font-size:14px; }
+        /* Primary uses the site's cyan→magenta accent gradient (keeps consistency) */
+        .cookie-topbar .btn-primary { background: linear-gradient(135deg, #00ffff, #ff00ff); color:#000; border:none; box-shadow: 0 10px 30px rgba(138,43,226,0.12); }
+        /* Outline uses subtle translucent white to fit the dark bar */
+        .cookie-topbar .btn-outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.12); }
+
+        /* When user rejects and acceptance is required, block the page content */
+        .cookie-blocker {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 10085;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .cookie-blocker.show { display: flex; }
+
+        .cookie-blocker .box { background: #111; padding: 18px; border-radius: 8px; max-width: 560px; }
+        .cookie-blocker .box { background: linear-gradient(180deg, rgba(10,10,12,0.98), rgba(18,16,22,0.98)); padding: 20px 22px; border-radius: 10px; max-width: 720px; border: 1px solid rgba(138,43,226,0.06); }
+        .cookie-blocker .box p { margin-bottom: 12px; }
+        .cookie-blocker .box .blocker-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; text-align:center; }
+        .cookie-blocker .box .blocker-sub { color: rgba(255,255,255,0.85); margin-bottom: 12px; text-align:center; }
+        .cookie-blocker .box .blocker-actions { display:flex; gap:12px; justify-content:center; }
+
+        /* ensure the banner can still be interacted with while blocking */
+        body.cookie-required *:not(.cookie-topbar):not(.cookie-topbar *) { pointer-events: none !important; }
+        body.cookie-required .cookie-topbar, body.cookie-required .cookie-topbar * { pointer-events: auto !important; }
+
     </style>
 </head>
 <body class="no-scroll">
+    <!-- Bottom cookie banner (compact) -->
+    <div id="cookieTopbar" class="cookie-topbar" role="region" aria-label="Cookie Hinweis">
+        <div class="inner">
+            <div class="message">
+                <div class="cookie-title">We value your privacy</div>
+                <div class="cookie-text">We use cookies to enhance your browsing experience, serve personalised ads or content, and analyse our traffic. By clicking "Accept All", you consent to our use of cookies. <a href="#">Cookie Policy</a></div>
+            </div>
+            <div class="actions">
+                <button id="cookieCustomize" class="btn-outline">Customise</button>
+                <button id="cookieReject" class="btn-outline">Reject All</button>
+                <button id="cookieAccept" class="btn-primary">Accept All</button>
+            </div>
+        </div>
+    </div>
+    <!-- Blocking overlay shown when user rejects but acceptance is required -->
+    <div id="cookieBlocker" class="cookie-blocker" role="dialog" aria-hidden="true">
+        <div class="box">
+            <div class="blocker-title">Du musst Cookies akzeptieren, um diese Seite zu verwenden.</div>
+            <div class="blocker-sub">Bitte akzeptiere unsere Cookies oder schließe die Seite.</div>
+            <div class="blocker-actions" style="margin-top:12px;">
+                <button id="blockerAccept" class="btn-primary">Akzeptieren</button>
+                <button id="blockerClose" class="btn-outline">Seite schließen</button>
+            </div>
+        </div>
+    </div>
     <div class="bg-animated">
         <!-- animated gradient layer -->
         <div class="bg-gradient" aria-hidden="true"></div>
@@ -1234,8 +1331,13 @@
         <!-- Footer / Copyright -->
         <footer style="width: 100%; background: rgba(20,20,30,0.92); color: #fff; text-align: center; padding: 32px 0 16px 0; margin-top: 60px; font-size: 17px; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -2px 24px rgba(138,43,226,0.12); border-top: 1.5px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px);">
             <!-- Social icons removed from footer per request -->
-            <div style="font-size: 15px; color: #fff; opacity: 0.85; letter-spacing: 1px;">&copy; 2025 Mertabii Developer & Designer – Made with <span style="color:#ff00ff;">❤</span> for the Community</div>
+            <div style="font-size: 15px; color: #fff; opacity: 0.85; letter-spacing: 1px; display:flex; gap:12px; align-items:center; justify-content:center; flex-direction:column;">
+                <div>&copy; 2025 Mertabii Developer & Designer – Made with <span style="color:#ff00ff;">❤</span> for the Community</div>
+                <div style="margin-top:6px;"></div>
+            </div>
         </footer>
+
+    
 
     <!-- Back to top button (fixed bottom-right) -->
     <button id="scrollTop" class="scroll-top" aria-label="Nach oben" title="Nach oben">
@@ -1275,6 +1377,45 @@
             <div class="modal-section">
                 <h3>Technologien</h3>
                 <div class="tech-tags" id="modalTech"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Customize Modal -->
+    <div class="modal" id="cookieCustomizeModal" aria-hidden="true" role="dialog" aria-label="Cookie Einstellungen">
+        <div class="modal-content">
+            <div class="modal-close" id="cookieCustomizeClose">×</div>
+            <div class="modal-header">
+                <h2 class="modal-title">Cookie Einstellungen</h2>
+                <p class="modal-subtitle">Wählen Sie, welche Cookie-Kategorien Sie zulassen möchten.</p>
+            </div>
+            <div class="modal-section">
+                <label style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <input type="checkbox" id="pref-required" checked disabled />
+                    <div>
+                        <div style="font-weight:700;">Erforderlich</div>
+                        <div style="font-size:13px;color:rgba(255,255,255,0.7);">Notwendig für die Grundfunktionen der Website.</div>
+                    </div>
+                </label>
+                <label style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <input type="checkbox" id="pref-analytics" />
+                    <div>
+                        <div style="font-weight:700;">Analytics</div>
+                        <div style="font-size:13px;color:rgba(255,255,255,0.7);">Ermöglicht uns, die Nutzung der Seite besser zu verstehen.</div>
+                    </div>
+                </label>
+                <label style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                    <input type="checkbox" id="pref-marketing" />
+                    <div>
+                        <div style="font-weight:700;">Marketing</div>
+                        <div style="font-size:13px;color:rgba(255,255,255,0.7);">Personalisierte Inhalte und Werbeanzeigen.</div>
+                    </div>
+                </label>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:18px;">
+                <button id="prefReject" class="btn-outline">Reject All</button>
+                <button id="prefSave" class="btn-secondary">Save</button>
+                <button id="prefAcceptAll" class="btn-primary">Accept All</button>
             </div>
         </div>
     </div>
@@ -1633,6 +1774,106 @@
                             }
                         }
                 })();
+
+    
+
+</script>
+
+    <script>
+    (function(){
+        const bar = document.getElementById('cookieTopbar');
+        const acceptBtn = document.getElementById('cookieAccept');
+        const rejectBtn = document.getElementById('cookieReject');
+        const customizeBtn = document.getElementById('cookieCustomize');
+        const blocker = document.getElementById('cookieBlocker');
+        const blockerAccept = document.getElementById('blockerAccept');
+        const blockerClose = document.getElementById('blockerClose');
+
+        function readConsent(){ try { return localStorage.getItem('cookieConsent'); } catch(e){ return null; } }
+        function writeConsent(v){ try { localStorage.setItem('cookieConsent', v); } catch(e){} }
+
+        function showBar(){ if(!bar) return; bar.classList.add('show'); }
+        function hideBar(){ if(!bar) return; bar.classList.remove('show'); }
+
+        function showBlocker(){ document.body.classList.add('cookie-required'); if(blocker){ blocker.classList.add('show'); blocker.setAttribute('aria-hidden','false'); } }
+        function hideBlocker(){ document.body.classList.remove('cookie-required'); if(blocker){ blocker.classList.remove('show'); blocker.setAttribute('aria-hidden','true'); } }
+
+        // Accept: store and dismiss everything
+        function onAccept(){ writeConsent('accepted'); hideBar(); hideBlocker(); }
+
+        // Reject: store declined but enforce acceptance by showing blocker
+        function onReject(){ writeConsent('declined'); // keep banner visible and show blocker message requiring acceptance
+            showBar(); showBlocker(); }
+
+        // Customize: open the customize modal
+        function onCustomize(){ openCustomizeModal(); }
+
+        // Customize modal helpers
+        function openCustomizeModal(){
+            const m = document.getElementById('cookieCustomizeModal');
+            if(!m) return;
+            m.classList.add('active');
+            m.setAttribute('aria-hidden','false');
+            // load existing prefs into UI
+            try{
+                const prefs = JSON.parse(localStorage.getItem('cookiePreferences') || '{}');
+                document.getElementById('pref-analytics').checked = !!prefs.analytics;
+                document.getElementById('pref-marketing').checked = !!prefs.marketing;
+            }catch(e){}
+        }
+
+        function closeCustomizeModal(){
+            const m = document.getElementById('cookieCustomizeModal');
+            if(!m) return;
+            m.classList.remove('active');
+            m.setAttribute('aria-hidden','true');
+        }
+
+        function savePreferences(){
+            const analytics = !!document.getElementById('pref-analytics').checked;
+            const marketing = !!document.getElementById('pref-marketing').checked;
+            const prefs = { required: true, analytics, marketing };
+            try{ localStorage.setItem('cookiePreferences', JSON.stringify(prefs)); }catch(e){}
+
+            // If any optional category granted, treat as accepted; otherwise consider declined
+            if (analytics || marketing) {
+                writeConsent('accepted'); hideBar(); hideBlocker();
+            } else {
+                writeConsent('declined'); showBar(); showBlocker();
+            }
+            closeCustomizeModal();
+        }
+
+        // Hook buttons
+        if(acceptBtn) acceptBtn.addEventListener('click', onAccept);
+        if(rejectBtn) rejectBtn.addEventListener('click', onReject);
+        if(customizeBtn) customizeBtn.addEventListener('click', onCustomize);
+        if(blockerAccept) blockerAccept.addEventListener('click', onAccept);
+        if(blockerClose) blockerClose.addEventListener('click', () => { window.location.href = 'about:blank'; });
+
+        // Wire customize modal buttons
+        const prefSaveBtn = document.getElementById('prefSave');
+        const prefAcceptAll = document.getElementById('prefAcceptAll');
+        const prefRejectBtn = document.getElementById('prefReject');
+        const cookieCustomizeClose = document.getElementById('cookieCustomizeClose');
+        if(prefSaveBtn) prefSaveBtn.addEventListener('click', savePreferences);
+        if(prefAcceptAll) prefAcceptAll.addEventListener('click', () => { document.getElementById('pref-analytics').checked = true; document.getElementById('pref-marketing').checked = true; savePreferences(); });
+        if(prefRejectBtn) prefRejectBtn.addEventListener('click', () => { document.getElementById('pref-analytics').checked = false; document.getElementById('pref-marketing').checked = false; savePreferences(); });
+        if(cookieCustomizeClose) cookieCustomizeClose.addEventListener('click', closeCustomizeModal);
+
+        // Initialize: if no consent, show bar. If consent=accepted hide; if declined, show bar+blocker
+        document.addEventListener('DOMContentLoaded', () => {
+            const pref = readConsent();
+            if (!pref) {
+                // show banner after small delay
+                setTimeout(showBar, 600);
+            } else if (pref === 'accepted') {
+                hideBar(); hideBlocker();
+            } else if (pref === 'declined') {
+                showBar(); showBlocker();
+            }
+        });
+    })();
     </script>
 </body>
 </html>
