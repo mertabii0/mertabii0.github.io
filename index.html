@@ -959,6 +959,29 @@
             .kontakt img.social-icon-img { width: 52px; height: 52px; }
         }
 
+        /* Make cookie UI mobile-friendly: stack content, larger touch targets, full-screen modals */
+        @media (max-width: 640px) {
+            .cookie-topbar .inner { flex-direction: column; align-items: stretch; gap: 12px; }
+            .cookie-topbar .message { flex: 1 1 auto; }
+            .cookie-topbar .actions { width: 100%; display: flex; gap: 8px; }
+            .cookie-topbar .actions button { flex: 1 1 auto; min-width: 0; }
+            .cookie-topbar { padding: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .cookie-topbar { padding: 12px 10px; }
+            .cookie-topbar .cookie-title { font-size: 16px; }
+            .cookie-topbar .cookie-text { font-size: 13px; }
+            /* Customize modal becomes almost full-screen on phones */
+            #cookieCustomizeModal .modal-content { width: 100%; max-width: 100%; height: 100%; border-radius: 0; padding: 16px; box-sizing: border-box; }
+            #cookieCustomizeModal .modal-content { overflow-y: auto; }
+            /* Blocker box width reduced to fit small screens */
+            .cookie-blocker .box { width: calc(100% - 32px); max-width: 760px; padding: 16px; }
+        }
+
+        /* Ensure customize modal appears above blocker and cookie-topbar */
+        #cookieCustomizeModal { z-index: 10150; }
+
         /* Back-to-top button */
         .scroll-top {
             position: fixed;
@@ -1130,9 +1153,9 @@
         .cookie-blocker .box .blocker-sub { color: rgba(255,255,255,0.85); margin-bottom: 12px; text-align:center; }
         .cookie-blocker .box .blocker-actions { display:flex; gap:12px; justify-content:center; }
 
-        /* ensure the banner can still be interacted with while blocking */
-        body.cookie-required *:not(.cookie-topbar):not(.cookie-topbar *) { pointer-events: none !important; }
-        body.cookie-required .cookie-topbar, body.cookie-required .cookie-topbar * { pointer-events: auto !important; }
+        /* ensure the banner and cookie controls can still be interacted with while blocking (allow customize modal & blocker) */
+        body.cookie-required *:not(.cookie-topbar):not(.cookie-topbar *):not(#cookieCustomizeModal):not(#cookieCustomizeModal *):not(#cookieBlocker):not(#cookieBlocker *) { pointer-events: none !important; }
+        body.cookie-required .cookie-topbar, body.cookie-required .cookie-topbar *, body.cookie-required #cookieCustomizeModal, body.cookie-required #cookieCustomizeModal * , body.cookie-required #cookieBlocker, body.cookie-required #cookieBlocker * { pointer-events: auto !important; }
 
     </style>
 </head>
@@ -1873,6 +1896,39 @@
                 showBar(); showBlocker();
             }
         });
+    })();
+    </script>
+    
+    <script>
+    // Disable right-click and common DevTools keyboard shortcuts
+    (function(){
+        // Block context menu (right click)
+        document.addEventListener('contextmenu', function(e){
+            try { e.preventDefault(); } catch (err) {}
+        }, { passive: false });
+
+        // Block F12 and common developer shortcuts
+        document.addEventListener('keydown', function(e){
+            // F12
+            if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+
+            // Ctrl+Shift+I / J / C
+            if (e.ctrlKey && e.shiftKey) {
+                const k = (e.key || '').toLowerCase();
+                if (k === 'i' || k === 'j' || k === 'c') { e.preventDefault(); e.stopPropagation(); return false; }
+            }
+
+            // Ctrl+U (view-source), Ctrl+S, Ctrl+Shift+U
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) { e.preventDefault(); e.stopPropagation(); return false; }
+        }, { capture: true, passive: false });
+
+        // Additionally, block some mouse-based devtools gestures (very limited effect)
+        window.addEventListener('mouseup', function(e){
+            // if user tried to open context menu via keyboard/mouse combos, just prevent
+            if (e.button === 2) {
+                try { e.preventDefault(); } catch (err) {}
+            }
+        }, { passive: false });
     })();
     </script>
 </body>
